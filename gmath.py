@@ -6,30 +6,43 @@ DIFFUSE = 1
 SPECULAR = 2
 LOCATION = 0
 COLOR = 1
-SPECULAR_EXP = 4
+SPECULAR_EXP = 8
 
 #lighting functions
 def get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect ):
-    pass
+    amb = calculate_ambient(ambient, areflect)
+    diff = calculate_diffuse(light, dreflect, normal)
+    spec = calculate_specular(light, sreflect, view, normal) 
+    color = [x + y + z for x, y, z in zip(amb, diff, spec)]
+    return limit_color(color)
 
 def calculate_ambient(alight, areflect):
-    pass
+    color = [x * y for x, y in zip(alight, areflect)]
+    return limit_color(color)
 
 def calculate_diffuse(light, dreflect, normal):
-    pass
+    color = [x * y * dot_product(normalize(normal), normalize(light[LOCATION])) for x, y in zip(light[COLOR], dreflect)]
+    return limit_color(color)
 
 def calculate_specular(light, sreflect, view, normal):
-    pass
+    a = dot_product(normalize(normal), normalize(light[LOCATION]))
+    color = [0, 0, 0]
+    if a > 0:
+        b = [2 * a * x - y for x, y in zip(normalize(normal), normalize(light[LOCATION]))]
+        R = dot_product(b, normalize(view)) ** SPECULAR_EXP
+        color = [x * y * R for x, y in zip(light[COLOR], sreflect)]
+    return limit_color(color)
 
 def limit_color(color):
-    pass
+    return [255 if x > 255 else 0 if x < 0 else int(x) for x in color]
 
 #vector functions
 def normalize(vector):
-    pass
+    magnitude = math.sqrt(dot_product(vector, vector))
+    return [x / magnitude for x in vector]
 
 def dot_product(a, b):
-    pass
+    return sum([x * y for x, y in zip(a, b)])
 
 def calculate_normal(polygons, i):
 

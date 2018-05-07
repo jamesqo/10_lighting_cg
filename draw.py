@@ -66,7 +66,6 @@ def draw_polygons( matrix, screen, zbuffer, view, ambient, light, areflect, dref
 
         normal = calculate_normal(matrix, point)[:]
         if dot_product(normal, view) > 0:
-
             color = get_lighting(normal, view, ambient, light, areflect, dreflect, sreflect )
             scanline_convert(matrix, point, screen, zbuffer, color)
 
